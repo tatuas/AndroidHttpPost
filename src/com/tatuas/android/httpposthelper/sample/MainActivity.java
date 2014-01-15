@@ -1,4 +1,4 @@
-package com.tatuas.android.httpdatapost.sample;
+package com.tatuas.android.httpposthelper.sample;
 
 import java.util.ArrayList;
 import java.util.List;
