@@ -1,13 +1,13 @@
-package com.tatuas.android.httprequesthelper;
+package com.tatuas.android.httpposthelper;
 
 import java.io.File;
 
-public class UploadFile {
+public class PostFile {
     private File uploadFile;
     private String tagName;
     private String mimeType;
 
-    public UploadFile(String tagName, String mimeType, File uploadFile) {
+    public PostFile(String tagName, String mimeType, File uploadFile) {
         this.tagName = tagName;
         this.mimeType = mimeType;
         this.uploadFile = uploadFile;
