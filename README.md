@@ -1,4 +1,4 @@
-AndroidHttpRequestHelper
+AndroidHttpPost
 ========================
 
-This is an android http request helper class.
+This is an android http post class.
