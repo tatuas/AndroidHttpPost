@@ -1,4 +1,4 @@
-package com.tatuas.android.httpposthelper;
+package com.tatuas.android.httppost;
 
 public class BasicAuth {
     private String userName;
