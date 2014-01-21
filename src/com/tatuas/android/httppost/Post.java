@@ -70,7 +70,7 @@ public class Post {
     }
 
     private void setBoundary() {
-        this.boundary = "--" + Long.toHexString(System.currentTimeMillis());
+        this.boundary = Long.toHexString(System.currentTimeMillis());
     }
 
     public void addRequestHeader(HashMap<String, String> headersMap) {
@@ -115,8 +115,8 @@ public class Post {
                     .toString());
             sConn.setRequestMethod("POST");
         } catch (Exception e) {
-            return new PostResult("", 0,
-                    PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+            return new PostResult("", 0, PostResult.Error.REQUEST_DATA_ERROR,
+                    e.toString());
         }
 
         if (isCustomHeader) {
@@ -145,8 +145,8 @@ public class Post {
         try {
             sConn.connect();
         } catch (Exception e) {
-            return new PostResult("", 0,
-                    PostResult.Error.NETWORK_DISABLE, e.toString());
+            return new PostResult("", 0, PostResult.Error.NETWORK_DISABLE,
+                    e.toString());
         }
 
         String resultData = "";
@@ -155,8 +155,8 @@ public class Post {
             OutputStream os = sConn.getOutputStream();
             byte[] startBoundary = new StringBuffer(boundary).append("\r\n")
                     .toString().getBytes();
-            byte[] endBoundary = new StringBuffer().append(boundary)
-                    .append("\r\n").toString().getBytes();
+            byte[] endBoundary = new StringBuffer(boundary).append("\r\n")
+                    .toString().getBytes();
 
             os.write(startBoundary);
             os.write(getPostDatasBytes());
@@ -169,8 +169,8 @@ public class Post {
             InputStream is = sConn.getInputStream();
             resultCode = sConn.getResponseCode();
             resultData = convertToString(is);
-            return new PostResult(resultData, sConn.getResponseCode(),
-                    null, null);
+            return new PostResult(resultData, sConn.getResponseCode(), null,
+                    null);
         } catch (Exception e) {
             return new PostResult(resultData, resultCode,
                     PostResult.Error.REQUEST_DATA_ERROR, e.toString());
@@ -191,8 +191,8 @@ public class Post {
                     .toString());
             conn.setRequestMethod("POST");
         } catch (Exception e) {
-            return new PostResult("", 0,
-                    PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+            return new PostResult("", 0, PostResult.Error.REQUEST_DATA_ERROR,
+                    e.toString());
         }
 
         if (isCustomHeader) {
@@ -221,17 +221,17 @@ public class Post {
         try {
             conn.connect();
         } catch (Exception e) {
-            return new PostResult("", 0,
-                    PostResult.Error.NETWORK_DISABLE, e.toString());
+            return new PostResult("", 0, PostResult.Error.NETWORK_DISABLE,
+                    e.toString());
         }
 
         String resultData = "";
         int resultCode = 0;
         try {
             OutputStream os = conn.getOutputStream();
-            byte[] startBoundary = new StringBuffer(boundary).append("\r\n")
-                    .toString().getBytes();
-            byte[] endBoundary = new StringBuffer().append(boundary)
+            byte[] startBoundary = new StringBuffer("--").append(boundary)
+                    .append("\r\n").toString().getBytes();
+            byte[] endBoundary = new StringBuffer("--").append(boundary)
                     .append("\r\n").toString().getBytes();
 
             os.write(startBoundary);
@@ -323,14 +323,14 @@ public class Post {
                         .append(inputTagFieldName).append("\"; filename=\"")
                         .append(f.getName()).append("\"\r\n")
                         .append("Content-Type: ").append(mimeType)
-                        .append("\r\n\r\n");
+                        .append("\r\n").append("\r\n");
 
                 os.write(buff.toString().getBytes());
                 os.write(getFileBytes(f));
 
                 StringBuffer buff2 = new StringBuffer();
-                // buff2.append("--").append(boundary).append("\r\n");
-                buff2.append(boundary).append("\r\n");
+                buff2.append("\r\n").append("\r\n").append("--")
+                        .append(boundary).append("\r\n");
 
                 os.write(buff2.toString().getBytes());
             } catch (Error e) {
@@ -350,8 +350,8 @@ public class Post {
         for (NameValuePair nv : postDatas) {
             mainBoundary.append("Content-Disposition: form-data; name=\"")
                     .append(nv.getName()).append("\"\r\n").append("\r\n")
-                    .append(nv.getValue()).append("\r\n").append(boundary)
-                    .append("\r\n");
+                    .append(nv.getValue()).append("\r\n").append("--")
+                    .append(boundary).append("\r\n");
         }
 
         return mainBoundary.toString().getBytes();
