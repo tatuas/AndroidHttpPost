@@ -151,12 +151,13 @@ public class Post {
 
         String resultData = "";
         int resultCode = 0;
+        InputStream is = null;
         try {
-            OutputStream os = sConn.getOutputStream();
-            byte[] startBoundary = new StringBuffer(boundary).append("\r\n")
-                    .toString().getBytes();
-            byte[] endBoundary = new StringBuffer(boundary).append("\r\n")
-                    .toString().getBytes();
+            OutputStream os = conn.getOutputStream();
+            byte[] startBoundary = new StringBuffer("--").append(boundary)
+                    .append("\r\n").toString().getBytes();
+            byte[] endBoundary = new StringBuffer("--").append(boundary)
+                    .append("\r\n").toString().getBytes();
 
             os.write(startBoundary);
             os.write(getPostDatasBytes());
@@ -166,14 +167,23 @@ public class Post {
             os.write(endBoundary);
             os.close();
 
-            InputStream is = sConn.getInputStream();
+            is = sConn.getInputStream();
             resultCode = sConn.getResponseCode();
-            resultData = convertToString(is);
-            return new PostResult(resultData, sConn.getResponseCode(), null,
-                    null);
         } catch (Exception e) {
+            if (sConn != null) {
+                sConn.disconnect();
+            }
             return new PostResult(resultData, resultCode,
                     PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+        }
+
+        try {
+            resultData = convertToString(is);
+            return new PostResult(resultData, resultCode, null,
+                    null);
+        } catch (Exception e) {
+            return new PostResult(resultData, resultCode, PostResult.Error.RESULT_DATA_ERROR,
+                    null);
         } finally {
             if (sConn != null) {
                 sConn.disconnect();
@@ -227,6 +237,7 @@ public class Post {
 
         String resultData = "";
         int resultCode = 0;
+        InputStream is = null;
         try {
             OutputStream os = conn.getOutputStream();
             byte[] startBoundary = new StringBuffer("--").append(boundary)
@@ -242,14 +253,23 @@ public class Post {
             os.write(endBoundary);
             os.close();
 
-            InputStream is = conn.getInputStream();
+            is = conn.getInputStream();
             resultCode = conn.getResponseCode();
-            resultData = convertToString(is);
-            return new PostResult(resultData, conn.getResponseCode(), null,
-                    null);
         } catch (Exception e) {
+            if (conn != null) {
+                conn.disconnect();
+            }
             return new PostResult(resultData, resultCode,
                     PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+        }
+
+        try {
+            resultData = convertToString(is);
+            return new PostResult(resultData, resultCode, null,
+                    null);
+        } catch (Exception e) {
+            return new PostResult(resultData, resultCode, PostResult.Error.RESULT_DATA_ERROR,
+                    null);
         } finally {
             if (conn != null) {
                 conn.disconnect();

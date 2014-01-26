@@ -1,12 +1,12 @@
 package com.tatuas.android.httppost;
 
-public class PostResult {
+public class GetResult {
     private String result;
     private int resultCode;
     private Error error;
     private String errorMessage;
 
-    public PostResult(String result, int resultCode, Error error, String errorMessage) {
+    public GetResult(String result, int resultCode, Error error, String errorMessage) {
         this.result = result;
         this.resultCode = resultCode;
         this.error = error;
@@ -30,6 +30,6 @@ public class PostResult {
     }
 
     public enum Error {
-        NETWORK_DISABLE, REQUEST_DATA_ERROR, RESULT_DATA_ERROR, SSL_FAILED, REQUEST_ERROR
+        NETWORK_DISABLE, URL_FAILED, RESULT_DATA_ERROR, SSL_FAILED, REQUEST_ERROR
     }
 }
