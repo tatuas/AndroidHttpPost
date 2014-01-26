@@ -1,4 +1,4 @@
-AndroidHttpPost
+AndroidHttpRequest
 ========================
 
-This is an android http post sample class.
+This is an android http request sample class.
