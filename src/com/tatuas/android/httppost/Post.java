@@ -103,16 +103,22 @@ public class Post {
     public PostResult execOnSSL(final BasicAuth auth) {
         try {
             URL url = getURL();
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, this.createTrustManagerFactory().getTrustManagers(),
-                    new java.security.SecureRandom());
             sConn = (HttpsURLConnection) url.openConnection();
-            sConn.setSSLSocketFactory(sc.getSocketFactory());
             sConn.setRequestProperty("Content-Type", new StringBuffer(
                     "multipart/form-data; boundary=").append(boundary)
                     .toString());
         } catch (Exception e) {
-            return new PostResult("", 0, PostResult.Error.REQUEST_DATA_ERROR,
+            return new PostResult("", 0, PostResult.Error.URL_FAILED,
+                    e.toString());
+        }
+
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, this.createTrustManagerFactory().getTrustManagers(),
+                    new java.security.SecureRandom());
+            sConn.setSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            return new PostResult("", 0, PostResult.Error.SSL_FAILED,
                     e.toString());
         }
 
@@ -133,7 +139,7 @@ public class Post {
             });
         }
 
-        sConn.setDoInput(true);
+        sConn.setDoOutput(true);
         sConn.setConnectTimeout(connectTimeOut);
         sConn.setReadTimeout(readTimeOut);
         sConn.setUseCaches(false);
@@ -147,6 +153,7 @@ public class Post {
 
         String resultData = "";
         int resultCode = 0;
+        InputStream is = null;
         try {
             OutputStream os = sConn.getOutputStream();
             byte[] startBoundary = new StringBuffer("--").append(boundary)
@@ -162,14 +169,24 @@ public class Post {
             os.write(endBoundary);
             os.close();
 
-            InputStream is = sConn.getInputStream();
+            is = sConn.getInputStream();
             resultCode = sConn.getResponseCode();
+        } catch (Exception e) {
+            if (sConn != null) {
+                sConn.disconnect();
+            }
+            return new PostResult(resultData, resultCode,
+                    PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+        }
+
+        try {
             resultData = convertToString(is);
-            return new PostResult(resultData, sConn.getResponseCode(), null,
+            return new PostResult(resultData, resultCode, null,
                     null);
         } catch (Exception e) {
             return new PostResult(resultData, resultCode,
-                    PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+                    PostResult.Error.RESULT_DATA_ERROR,
+                    null);
         } finally {
             if (sConn != null) {
                 sConn.disconnect();
@@ -185,7 +202,7 @@ public class Post {
                     "multipart/form-data; boundary=").append(boundary)
                     .toString());
         } catch (Exception e) {
-            return new PostResult("", 0, PostResult.Error.REQUEST_DATA_ERROR,
+            return new PostResult("", 0, PostResult.Error.URL_FAILED,
                     e.toString());
         }
 
@@ -206,7 +223,7 @@ public class Post {
             });
         }
 
-        conn.setDoInput(true);
+        conn.setDoOutput(true);
         conn.setConnectTimeout(connectTimeOut);
         conn.setReadTimeout(readTimeOut);
         conn.setUseCaches(false);
@@ -220,6 +237,7 @@ public class Post {
 
         String resultData = "";
         int resultCode = 0;
+        InputStream is = null;
         try {
             OutputStream os = conn.getOutputStream();
             byte[] startBoundary = new StringBuffer("--").append(boundary)
@@ -235,14 +253,24 @@ public class Post {
             os.write(endBoundary);
             os.close();
 
-            InputStream is = conn.getInputStream();
+            is = conn.getInputStream();
             resultCode = conn.getResponseCode();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.disconnect();
+            }
+            return new PostResult(resultData, resultCode,
+                    PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+        }
+
+        try {
             resultData = convertToString(is);
-            return new PostResult(resultData, conn.getResponseCode(), null,
+            return new PostResult(resultData, resultCode, null,
                     null);
         } catch (Exception e) {
             return new PostResult(resultData, resultCode,
-                    PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+                    PostResult.Error.RESULT_DATA_ERROR,
+                    null);
         } finally {
             if (conn != null) {
                 conn.disconnect();
