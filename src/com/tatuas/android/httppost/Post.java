@@ -103,19 +103,22 @@ public class Post {
     public PostResult execOnSSL(final BasicAuth auth) {
         try {
             URL url = getURL();
-            SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, this.createTrustManagerFactory().getTrustManagers(),
-                    new java.security.SecureRandom());
-
-            sConn.setSSLSocketFactory(sc.getSocketFactory());
             sConn = (HttpsURLConnection) url.openConnection();
-            sConn.setRequestProperty("Connection", "Keep-Alive");
             sConn.setRequestProperty("Content-Type", new StringBuffer(
                     "multipart/form-data; boundary=").append(boundary)
                     .toString());
-            sConn.setRequestMethod("POST");
         } catch (Exception e) {
-            return new PostResult("", 0, PostResult.Error.REQUEST_DATA_ERROR,
+            return new PostResult("", 0, PostResult.Error.URL_FAILED,
+                    e.toString());
+        }
+
+        try {
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, this.createTrustManagerFactory().getTrustManagers(),
+                    new java.security.SecureRandom());
+            sConn.setSSLSocketFactory(sc.getSocketFactory());
+        } catch (Exception e) {
+            return new PostResult("", 0, PostResult.Error.SSL_FAILED,
                     e.toString());
         }
 
@@ -136,7 +139,6 @@ public class Post {
             });
         }
 
-        sConn.setDoInput(true);
         sConn.setDoOutput(true);
         sConn.setConnectTimeout(connectTimeOut);
         sConn.setReadTimeout(readTimeOut);
@@ -153,7 +155,7 @@ public class Post {
         int resultCode = 0;
         InputStream is = null;
         try {
-            OutputStream os = conn.getOutputStream();
+            OutputStream os = sConn.getOutputStream();
             byte[] startBoundary = new StringBuffer("--").append(boundary)
                     .append("\r\n").toString().getBytes();
             byte[] endBoundary = new StringBuffer("--").append(boundary)
@@ -182,7 +184,8 @@ public class Post {
             return new PostResult(resultData, resultCode, null,
                     null);
         } catch (Exception e) {
-            return new PostResult(resultData, resultCode, PostResult.Error.RESULT_DATA_ERROR,
+            return new PostResult(resultData, resultCode,
+                    PostResult.Error.RESULT_DATA_ERROR,
                     null);
         } finally {
             if (sConn != null) {
@@ -195,13 +198,11 @@ public class Post {
         try {
             URL url = getURL();
             conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestProperty("Connection", "Keep-Alive");
             conn.setRequestProperty("Content-Type", new StringBuffer(
                     "multipart/form-data; boundary=").append(boundary)
                     .toString());
-            conn.setRequestMethod("POST");
         } catch (Exception e) {
-            return new PostResult("", 0, PostResult.Error.REQUEST_DATA_ERROR,
+            return new PostResult("", 0, PostResult.Error.URL_FAILED,
                     e.toString());
         }
 
@@ -222,7 +223,6 @@ public class Post {
             });
         }
 
-        conn.setDoInput(true);
         conn.setDoOutput(true);
         conn.setConnectTimeout(connectTimeOut);
         conn.setReadTimeout(readTimeOut);
@@ -268,7 +268,8 @@ public class Post {
             return new PostResult(resultData, resultCode, null,
                     null);
         } catch (Exception e) {
-            return new PostResult(resultData, resultCode, PostResult.Error.RESULT_DATA_ERROR,
+            return new PostResult(resultData, resultCode,
+                    PostResult.Error.RESULT_DATA_ERROR,
                     null);
         } finally {
             if (conn != null) {

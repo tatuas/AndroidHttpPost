@@ -54,7 +54,6 @@ public class SubActivity extends FragmentActivity implements LoaderCallbacks<Get
             Toast.makeText(this, toast, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(this, "error " + toast, Toast.LENGTH_LONG).show();
-            Toast.makeText(this, "error " + arg1.getErrorItem(), Toast.LENGTH_LONG).show();
         }
 }
 

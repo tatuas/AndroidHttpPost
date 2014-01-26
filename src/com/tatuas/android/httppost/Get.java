@@ -62,9 +62,15 @@ public class Get {
     public GetResult execOnSSL(final BasicAuth auth) {
         try {
             URL url = getURL();
+            sConn = (HttpsURLConnection) url.openConnection();
+        } catch (Exception e) {
+            return new GetResult("", 0, GetResult.Error.URL_FAILED,
+                    e.toString());
+        }
+
+        try {
             SSLContext sc = SSLContext.getInstance("TLS");
             sc.init(null, null, new java.security.SecureRandom());
-            sConn = (HttpsURLConnection) url.openConnection();
             sConn.setSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {
             return new GetResult("", 0, GetResult.Error.SSL_FAILED,

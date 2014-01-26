@@ -6,7 +6,8 @@ public class PostResult {
     private Error error;
     private String errorMessage;
 
-    public PostResult(String result, int resultCode, Error error, String errorMessage) {
+    public PostResult(String result, int resultCode, Error error,
+            String errorMessage) {
         this.result = result;
         this.resultCode = resultCode;
         this.error = error;
@@ -30,6 +31,6 @@ public class PostResult {
     }
 
     public enum Error {
-        NETWORK_DISABLE, REQUEST_DATA_ERROR, RESULT_DATA_ERROR, SSL_FAILED, REQUEST_ERROR
+        NETWORK_DISABLE, URL_FAILED, REQUEST_DATA_ERROR, RESULT_DATA_ERROR, SSL_FAILED, REQUEST_ERROR
     }
 }
