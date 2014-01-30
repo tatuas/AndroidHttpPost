@@ -1,4 +1,4 @@
-package com.tatuas.android.httppost.sample;
+package com.tatuas.android.httprequest.sample;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +7,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.tatuas.android.httppost.PostFile;
-import com.tatuas.android.httppost.PostResult;
-import com.tatuas.android.httppost.PostTaskLoader;
+import com.tatuas.android.httprequest.PostFile;
+import com.tatuas.android.httprequest.PostResult;
+import com.tatuas.android.httprequest.PostTaskLoader;
 
 import android.os.Bundle;
 import android.app.ProgressDialog;

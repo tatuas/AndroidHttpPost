@@ -1,9 +1,9 @@
-package com.tatuas.android.httppost.sample;
+package com.tatuas.android.httprequest.sample;
 
 import org.apache.http.HttpStatus;
 
-import com.tatuas.android.httppost.GetResult;
-import com.tatuas.android.httppost.GetTaskLoader;
+import com.tatuas.android.httprequest.GetResult;
+import com.tatuas.android.httprequest.GetTaskLoader;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;

@@ -1,33 +1,19 @@
-package com.tatuas.android.httppost;
-
-import java.util.List;
-
-import org.apache.http.NameValuePair;
+package com.tatuas.android.httprequest;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 
-public class PostTaskLoader extends AsyncTaskLoader<PostResult> {
+public class GetTaskLoader extends AsyncTaskLoader<GetResult> {
     private String urlStr;
-    private PostResult result;
-    private List<PostFile> files;
-    private List<NameValuePair> nameValuePair;
+    private GetResult result;
     private BasicAuth auth;
-    private Post req;
+    private Get req;
     private boolean useSSL;
 
-    public PostTaskLoader(Context context, String urlStr, boolean useSSL) {
+    public GetTaskLoader(Context context, String urlStr, boolean useSSL) {
         super(context);
         this.urlStr = urlStr;
         this.useSSL = useSSL;
-    }
-
-    public void setPostData(List<NameValuePair> nameValuePair) {
-        this.nameValuePair = nameValuePair;
-    }
-
-    public void setPostFiles(List<PostFile> files) {
-        this.files = files;
     }
 
     public void setBasicAuth(BasicAuth auth) {
@@ -35,19 +21,10 @@ public class PostTaskLoader extends AsyncTaskLoader<PostResult> {
     }
 
     @Override
-    public PostResult loadInBackground() {
-        if (nameValuePair == null) {
-            return new PostResult("", 0,
-                    PostResult.Error.REQUEST_DATA_ERROR, "loader error.");
-        }
-
-        req = new Post(urlStr, nameValuePair);
+    public GetResult loadInBackground() {
+        req = new Get(urlStr);
         req.setReadTimeOut(100000);
         req.setConnectTimeOut(150000);
-
-        if (files != null) {
-            req.setUploadFiles(files);
-        }
 
         if (useSSL) {
             return req.execOnSSL(auth);
@@ -65,7 +42,7 @@ public class PostTaskLoader extends AsyncTaskLoader<PostResult> {
     }
 
     @Override
-    public void deliverResult(PostResult data) {
+    public void deliverResult(GetResult data) {
         if (isReset()) {
             return;
         }
