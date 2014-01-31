@@ -1,11 +1,9 @@
 package com.tatuas.android.httprequest;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -14,25 +12,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateFactory;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
-
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import org.apache.http.NameValuePair;
-
-import android.util.Log;
 
 public class Post {
     private HttpURLConnection conn;
@@ -114,8 +101,7 @@ public class Post {
 
         try {
             SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, this.createTrustManagerFactory().getTrustManagers(),
-                    new java.security.SecureRandom());
+            sc.init(null, null, new java.security.SecureRandom());
             sConn.setSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {
             return new PostResult("", 0, PostResult.Error.SSL_FAILED,
@@ -382,6 +368,7 @@ public class Post {
         return new URL(urlStr);
     }
 
+/*
     // 認証局の追加
     private TrustManagerFactory createTrustManagerFactory()
             throws CertificateException, IOException, KeyStoreException,
@@ -411,5 +398,5 @@ public class Post {
 
         return tmf;
     }
-
+*/
 }
