@@ -12,10 +12,14 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
@@ -87,6 +91,31 @@ public class Post {
         }
     }
 
+    private TrustManager[] getTrustManager() {
+
+        TrustManager[] trustAllCerts = new TrustManager[] {
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new java.security.cert.X509Certificate[] {};
+                    }
+
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain,
+                            String authType) throws CertificateException {
+                        // TODO Auto-generated method stub
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] chain,
+                            String authType) throws CertificateException {
+                        // TODO Auto-generated method stub
+                    }
+                }
+        };
+
+        return trustAllCerts;
+    }
+
     public PostResult execOnSSL(final BasicAuth auth) {
         try {
             URL url = getURL();
@@ -101,7 +130,7 @@ public class Post {
 
         try {
             SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, null, new java.security.SecureRandom());
+            sc.init(null, getTrustManager(), new java.security.SecureRandom());
             sConn.setSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {
             return new PostResult("", 0, PostResult.Error.SSL_FAILED,
@@ -368,35 +397,27 @@ public class Post {
         return new URL(urlStr);
     }
 
-/*
-    // 認証局の追加
-    private TrustManagerFactory createTrustManagerFactory()
-            throws CertificateException, IOException, KeyStoreException,
-            NoSuchAlgorithmException {
-        CertificateFactory cf = CertificateFactory.getInstance("X.509");
-        // From https://www.washington.edu/itconnect/security/ca/load-der.crt
-        InputStream caInput = new BufferedInputStream(new FileInputStream(
-                "/storage/emulated/0/ca-bundle.crt"));
-        Certificate ca;
-        try {
-            ca = cf.generateCertificate(caInput);
-            Log.e("washinton", "ca=" + ((X509Certificate) ca).getSubjectDN());
-        } finally {
-            caInput.close();
-        }
-
-        // Create a KeyStore containing our trusted CAs
-        String keyStoreType = KeyStore.getDefaultType();
-        KeyStore keyStore = KeyStore.getInstance(keyStoreType);
-        keyStore.load(null, null);
-        keyStore.setCertificateEntry("ca", ca);
-
-        // Create a TrustManager that trusts the CAs in our KeyStore
-        String tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-        TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
-        tmf.init(keyStore);
-
-        return tmf;
-    }
-*/
+    /*
+     * // 認証局の追加 private TrustManagerFactory createTrustManagerFactory() throws
+     * CertificateException, IOException, KeyStoreException,
+     * NoSuchAlgorithmException { CertificateFactory cf =
+     * CertificateFactory.getInstance("X.509"); // From
+     * https://www.washington.edu/itconnect/security/ca/load-der.crt InputStream
+     * caInput = new BufferedInputStream(new FileInputStream(
+     * "/storage/emulated/0/ca-bundle.crt")); Certificate ca; try { ca =
+     * cf.generateCertificate(caInput); Log.e("washinton", "ca=" +
+     * ((X509Certificate) ca).getSubjectDN()); } finally { caInput.close(); }
+     * 
+     * // Create a KeyStore containing our trusted CAs String keyStoreType =
+     * KeyStore.getDefaultType(); KeyStore keyStore =
+     * KeyStore.getInstance(keyStoreType); keyStore.load(null, null);
+     * keyStore.setCertificateEntry("ca", ca);
+     * 
+     * // Create a TrustManager that trusts the CAs in our KeyStore String
+     * tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+     * TrustManagerFactory tmf = TrustManagerFactory.getInstance(tmfAlgorithm);
+     * tmf.init(keyStore);
+     * 
+     * return tmf; }
+     */
 }
