@@ -25,6 +25,8 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.http.NameValuePair;
 
+import android.os.Build;
+
 public class Post {
     private HttpURLConnection conn;
     private HttpsURLConnection sConn;
@@ -130,7 +132,11 @@ public class Post {
 
         try {
             SSLContext sc = SSLContext.getInstance("TLS");
-            sc.init(null, getTrustManager(), new java.security.SecureRandom());
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.FROYO) {
+                sc.init(null, getTrustManager(), new java.security.SecureRandom());
+            } else {
+                sc.init(null, null, new java.security.SecureRandom());
+            }
             sConn.setSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {
             return new PostResult("", 0, PostResult.Error.SSL_FAILED,
