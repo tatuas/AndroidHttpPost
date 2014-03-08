@@ -94,28 +94,34 @@ public class Post {
     }
 
     private TrustManager[] getTrustManager() {
+        if (isFroyo()) {
+            TrustManager[] trustAllCerts = new TrustManager[] {
+                    new X509TrustManager() {
+                        public X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[] {};
+                        }
 
-        TrustManager[] trustAllCerts = new TrustManager[] {
-                new X509TrustManager() {
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new java.security.cert.X509Certificate[] {};
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] chain,
+                                String authType) throws CertificateException {
+                            // TODO Auto-generated method stub
+                        }
+
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] chain,
+                                String authType) throws CertificateException {
+                            // TODO Auto-generated method stub
+                        }
                     }
+            };
+            return trustAllCerts;
+        } else {
+            return null;
+        }
+    }
 
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain,
-                            String authType) throws CertificateException {
-                        // TODO Auto-generated method stub
-                    }
-
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] chain,
-                            String authType) throws CertificateException {
-                        // TODO Auto-generated method stub
-                    }
-                }
-        };
-
-        return trustAllCerts;
+    private boolean isFroyo() {
+        return Build.VERSION.SDK_INT == Build.VERSION_CODES.FROYO;
     }
 
     public PostResult execOnSSL(final BasicAuth auth) {
@@ -132,11 +138,8 @@ public class Post {
 
         try {
             SSLContext sc = SSLContext.getInstance("TLS");
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.FROYO) {
-                sc.init(null, getTrustManager(), new java.security.SecureRandom());
-            } else {
-                sc.init(null, null, new java.security.SecureRandom());
-            }
+            sc.init(null, getTrustManager(),
+                    new java.security.SecureRandom());
             sConn.setSSLSocketFactory(sc.getSocketFactory());
         } catch (Exception e) {
             return new PostResult("", 0, PostResult.Error.SSL_FAILED,
@@ -170,6 +173,10 @@ public class Post {
         } catch (Exception e) {
             return new PostResult("", 0, PostResult.Error.NETWORK_DISABLE,
                     e.toString());
+        } finally {
+            if (sConn != null) {
+                sConn.disconnect();
+            }
         }
 
         String resultData = "";
@@ -193,11 +200,12 @@ public class Post {
             is = sConn.getInputStream();
             resultCode = sConn.getResponseCode();
         } catch (Exception e) {
+            return new PostResult(resultData, resultCode,
+                    PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+        } finally {
             if (sConn != null) {
                 sConn.disconnect();
             }
-            return new PostResult(resultData, resultCode,
-                    PostResult.Error.REQUEST_DATA_ERROR, e.toString());
         }
 
         try {
@@ -254,6 +262,10 @@ public class Post {
         } catch (Exception e) {
             return new PostResult("", 0, PostResult.Error.NETWORK_DISABLE,
                     e.toString());
+        } finally {
+            if (sConn != null) {
+                sConn.disconnect();
+            }
         }
 
         String resultData = "";
@@ -282,6 +294,10 @@ public class Post {
             }
             return new PostResult(resultData, resultCode,
                     PostResult.Error.REQUEST_DATA_ERROR, e.toString());
+        } finally {
+            if (sConn != null) {
+                sConn.disconnect();
+            }
         }
 
         try {

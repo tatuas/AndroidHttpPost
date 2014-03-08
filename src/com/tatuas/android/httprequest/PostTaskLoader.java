@@ -58,9 +58,6 @@ public class PostTaskLoader extends AsyncTaskLoader<PostResult> {
 
     @Override
     public void stopLoading() {
-        if (req != null) {
-            req.close();
-        }
         super.stopLoading();
     }
 
