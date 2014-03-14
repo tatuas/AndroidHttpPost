@@ -17,6 +17,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends FragmentActivity implements
@@ -30,6 +33,28 @@ public class MainActivity extends FragmentActivity implements
 
         final int LOADER_ID1 = 1;
         getSupportLoaderManager().initLoader(LOADER_ID1, null, this);
+
+        Button getBtn = (Button) findViewById(R.id.getBtn);
+        getBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GetManager get = new GetManager(v.getContext());
+                int LOADER_ID = 1;
+                getSupportLoaderManager().initLoader(LOADER_ID,
+                        null, get.getLoaderCallbacks("http://httpbin.org/get"));
+            }
+        });
+
+        Button postBtn = (Button) findViewById(R.id.postBtn);
+        postBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PostManager post = new PostManager(v.getContext());
+                int LOADER_ID = 4;
+                getSupportLoaderManager().initLoader(LOADER_ID,
+                        null, post.getLoaderCallbacks("http://httpbin.org/post"));
+            }
+        });
     }
 
     @Override
