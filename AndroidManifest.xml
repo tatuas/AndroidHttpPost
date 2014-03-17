@@ -18,8 +18,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.tatuas.android.httprequest.sample.ThirdActivity"
-            android:label="@string/app_name" >
+            android:name="com.tatuas.android.httprequest.sample.SampleOneActivity"
+            android:label="@string/title_activity_one" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,8 +27,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.tatuas.android.httprequest.sample.SubActivity"
-            android:label="@string/title_activity_sub" >
+            android:name="com.tatuas.android.httprequest.sample.SampleTwoActivity"
+            android:label="@string/title_activity_two" >
+        </activity>
+        <activity
+            android:name="com.tatuas.android.httprequest.sample.SampleThreeActivity"
+            android:label="@string/title_activity_three" >
         </activity>
     </application>
 

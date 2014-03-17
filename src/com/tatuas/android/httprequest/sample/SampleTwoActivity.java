@@ -1,56 +1,51 @@
 package com.tatuas.android.httprequest.sample;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
-import com.tatuas.android.httprequest.PostFile;
-import com.tatuas.android.httprequest.PostResult;
-import com.tatuas.android.httprequest.PostTaskLoader;
+import com.tatuas.android.httprequest.GetResult;
+import com.tatuas.android.httprequest.GetTaskLoader;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.view.Menu;
 import android.widget.Toast;
 
-public class ThirdActivity extends FragmentActivity implements
-        LoaderCallbacks<PostResult> {
+public class SampleTwoActivity extends FragmentActivity implements LoaderCallbacks<GetResult>{
     private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_third);
+        setContentView(R.layout.activity_sub);
 
         final int LOADER_ID1 = 1;
         getSupportLoaderManager().initLoader(LOADER_ID1, null, this);
+ }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.sub, menu);
+        return true;
     }
 
     @Override
-    public Loader<PostResult> onCreateLoader(int arg0, Bundle arg1) {
+    public Loader<GetResult> onCreateLoader(int arg0, Bundle arg1) {
         dialog = new ProgressDialog(this);
         dialog.setTitle("Wait");
         dialog.setMessage("uploading data...");
         dialog.setCancelable(false);
         dialog.show();
-        String urlStr = "http://httpbin.org/post";
-        List<PostFile> files = null;
-        List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-        nameValuePair.add(new BasicNameValuePair("sampleKey", "sampleValue"));
-
-        PostTaskLoader loader = new PostTaskLoader(this, urlStr, false);
-        loader.setPostData(nameValuePair);
-        loader.setPostFiles(files);
+        String urlStr = "http://httpbin.org/get";
+        GetTaskLoader loader = new GetTaskLoader(this, urlStr, false);
         return loader;
     }
 
     @Override
-    public void onLoadFinished(Loader<PostResult> arg0, PostResult arg1) {
+    public void onLoadFinished(Loader<GetResult> arg0, GetResult arg1) {
         // TODO Auto-generated method stub
         String toast = "STATUS:" + String.valueOf(arg1.getResultCode());
         toast += ">>>>>" + arg1.getResultData();
@@ -60,10 +55,12 @@ public class ThirdActivity extends FragmentActivity implements
         } else {
             Toast.makeText(this, "error " + toast, Toast.LENGTH_LONG).show();
         }
-    }
+}
 
     @Override
-    public void onLoaderReset(Loader<PostResult> arg0) {
+    public void onLoaderReset(Loader<GetResult> arg0) {
         // TODO Auto-generated method stub
+        
     }
+
 }

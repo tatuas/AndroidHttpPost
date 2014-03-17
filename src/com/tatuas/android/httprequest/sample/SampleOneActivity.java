@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
-public class MainActivity extends FragmentActivity {
+public class SampleOneActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
